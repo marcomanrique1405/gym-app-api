@@ -15,6 +15,8 @@ public class UsuarioMapper {
         entity.setEmail(usuario.getEmail());
         entity.setPassword(usuario.getPassword());
         entity.setFechaRegistro(usuario.getFechaRegistro());
+        entity.setRol(usuario.getRol());
+        entity.setActivo(usuario.getActivo());
 
         return entity;
     }
@@ -26,6 +28,8 @@ public class UsuarioMapper {
                 .email(entity.getEmail())
                 .password(entity.getPassword())
                 .fechaRegistro(entity.getFechaRegistro())
+                .rol(entity.getRol())
+                .activo(entity.getActivo())
                 .build();
     }
 

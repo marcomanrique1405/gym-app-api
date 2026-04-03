@@ -35,9 +35,14 @@ public class LoginUserUseCase {
             throw new InvalidCredentialsException();
         }
 
+        if (!usuario.getActivo()) {
+            throw new InvalidCredentialsException();
+        }
+
         String token = jwtService.generateToken(
                 usuario.getId().toString(),
-                usuario.getEmail()
+                usuario.getEmail(),
+                usuario.getRol()
         );
 
         return toResponse(usuario, token);

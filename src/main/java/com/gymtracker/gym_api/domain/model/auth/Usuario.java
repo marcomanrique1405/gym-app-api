@@ -1,5 +1,6 @@
 package com.gymtracker.gym_api.domain.model.auth;
 
+import com.gymtracker.gym_api.domain.enums.Rol;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,4 +15,6 @@ public class Usuario {
     private String email;
     private String password;
     private LocalDateTime fechaRegistro;
+    private Rol rol;
+    private Boolean activo;
 }

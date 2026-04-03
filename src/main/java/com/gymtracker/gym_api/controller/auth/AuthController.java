@@ -3,6 +3,7 @@ package com.gymtracker.gym_api.controller.auth;
 import com.gymtracker.gym_api.application.dto.request.auth.LoginRequest;
 import com.gymtracker.gym_api.application.dto.request.auth.RegisterUserRequest;
 import com.gymtracker.gym_api.application.dto.response.auth.AuthResponse;
+import com.gymtracker.gym_api.application.dto.response.auth.AuthResponseRegister;
 import com.gymtracker.gym_api.application.usecase.auth.LoginUserUseCase;
 import com.gymtracker.gym_api.application.usecase.auth.RegisterUserUseCase;
 import jakarta.validation.Valid;
@@ -26,7 +27,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterUserRequest request) {
+    public ResponseEntity<AuthResponseRegister> register(@Valid @RequestBody RegisterUserRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(registerUserUseCase.register(request));
     }

@@ -1,7 +1,8 @@
 package com.gymtracker.gym_api.application.usecase.auth;
 
 import com.gymtracker.gym_api.application.dto.request.auth.RegisterUserRequest;
-import com.gymtracker.gym_api.application.dto.response.auth.AuthResponse;
+import com.gymtracker.gym_api.application.dto.response.auth.AuthResponseRegister;
+import com.gymtracker.gym_api.domain.enums.Rol;
 import com.gymtracker.gym_api.domain.model.auth.Usuario;
 import com.gymtracker.gym_api.domain.repository.auth.UsuarioRepository;
 import com.gymtracker.gym_api.shared.exception.auth.EmailAlreadyExistsException;
@@ -24,22 +25,25 @@ public class RegisterUserUseCase {
     }
 
 
-    public AuthResponse register(RegisterUserRequest request) {
+    public AuthResponseRegister register(RegisterUserRequest request) {
 
         String email = request.getEmail().trim().toLowerCase();
-
-        String passwordEncriptada = passwordEncoder.encode(request.getPassword());
 
         if (usuarioRepository.existePorEmail(email)) {
             throw new EmailAlreadyExistsException();
         }
 
-        Usuario usuario = new Usuario(
-                UUID.randomUUID(),
-                request.getNombre(),
-                email,
-                passwordEncriptada,
-                LocalDateTime.now());
+        String passwordEncriptada = passwordEncoder.encode(request.getPassword());
+
+        Usuario usuario = Usuario.builder()
+                .id(UUID.randomUUID())
+                .nombre(request.getNombre())
+                .email(email)
+                .password(passwordEncriptada)
+                .fechaRegistro(LocalDateTime.now())
+                .rol(Rol.USER)
+                .activo(true)
+                .build();
 
         Usuario usuarioGuardado = usuarioRepository.guardar(usuario);
 
@@ -47,8 +51,8 @@ public class RegisterUserUseCase {
 
     }
 
-    private AuthResponse toResponse(Usuario usuario) {
-        return new AuthResponse(
+    private AuthResponseRegister toResponse(Usuario usuario) {
+        return new AuthResponseRegister(
                 usuario.getId(),
                 usuario.getNombre(),
                 usuario.getEmail(),

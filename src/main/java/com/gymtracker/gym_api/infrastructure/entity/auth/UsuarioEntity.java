@@ -1,10 +1,7 @@
 package com.gymtracker.gym_api.infrastructure.entity.auth;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import com.gymtracker.gym_api.domain.enums.Rol;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,5 +31,12 @@ public class UsuarioEntity {
 
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Rol rol;
+
+    @Column(nullable = false)
+    private Boolean activo;
 
 }

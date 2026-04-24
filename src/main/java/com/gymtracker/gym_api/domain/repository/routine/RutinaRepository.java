@@ -12,10 +12,11 @@ public interface RutinaRepository {
 
     boolean existePorUsuarioIdYNombre(UUID usuarioId, String nombre);
 
-    List<Rutina> obtenerPorUsuarioId(UUID usuarioId);
+    List<Rutina> obtenerPorUsuarioIdYActivaTrue(UUID usuarioId);
 
     Optional<Rutina> obtenerPorId(UUID id);
 
     boolean existePorId(UUID id);
 
+    Optional<Rutina> obtenerPorIdYUsuarioId(UUID id, UUID usuarioId);
 }

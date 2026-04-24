@@ -12,7 +12,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateRutinaResponse {
+public class RutinaResponse {
     private UUID id;
     private String nombre;
     private TipoProgresion tipoProgresion;

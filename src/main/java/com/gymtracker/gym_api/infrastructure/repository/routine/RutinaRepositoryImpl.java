@@ -40,9 +40,9 @@ public class RutinaRepositoryImpl implements RutinaRepository {
     }
 
     @Override
-    public List<Rutina> obtenerPorUsuarioId(UUID usuarioId) {
+    public List<Rutina> obtenerPorUsuarioIdYActivaTrue(UUID usuarioId) {
         return rutinaJpaRepository
-                .findByUsuarioId(usuarioId)
+                .findByUsuarioIdAndActivaTrue(usuarioId)
                 .stream()
                 .map(rutinaMapper::toDomain)
                 .toList();
@@ -60,4 +60,12 @@ public class RutinaRepositoryImpl implements RutinaRepository {
     public boolean existePorId(UUID id) {
         return rutinaJpaRepository.existsById(id);
     }
+
+    @Override
+    public Optional<Rutina> obtenerPorIdYUsuarioId(UUID id, UUID usuarioId) {
+        return rutinaJpaRepository
+                .findByIdAndUsuarioId(id, usuarioId)
+                .map(rutinaMapper::toDomain);
+    }
+
 }

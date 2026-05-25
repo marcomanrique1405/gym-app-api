@@ -1,10 +1,10 @@
-package com.gymtracker.gym_api.infrastructure.repository.routine;
+package com.gymtracker.gym_api.infrastructure.repositoryImpl.routine.rutina;
 
-import com.gymtracker.gym_api.domain.model.routine.Rutina;
-import com.gymtracker.gym_api.domain.repository.routine.RutinaRepository;
-import com.gymtracker.gym_api.infrastructure.entity.routine.RutinaEntity;
-import com.gymtracker.gym_api.infrastructure.jpa.routine.RutinaJpaRepository;
-import com.gymtracker.gym_api.infrastructure.mapper.routine.RutinaMapper;
+import com.gymtracker.gym_api.domain.model.routine.rutina.Rutina;
+import com.gymtracker.gym_api.domain.repository.routine.rutina.RutinaRepository;
+import com.gymtracker.gym_api.infrastructure.entity.routine.rutina.RutinaEntity;
+import com.gymtracker.gym_api.infrastructure.jpa.routine.rutina.RutinaJpaRepository;
+import com.gymtracker.gym_api.infrastructure.mapper.routine.rutina.RutinaMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

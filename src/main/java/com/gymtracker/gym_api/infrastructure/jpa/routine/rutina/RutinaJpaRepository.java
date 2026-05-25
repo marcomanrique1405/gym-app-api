@@ -1,6 +1,6 @@
-package com.gymtracker.gym_api.infrastructure.jpa.routine;
+package com.gymtracker.gym_api.infrastructure.jpa.routine.rutina;
 
-import com.gymtracker.gym_api.infrastructure.entity.routine.RutinaEntity;
+import com.gymtracker.gym_api.infrastructure.entity.routine.rutina.RutinaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

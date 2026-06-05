@@ -1,4 +1,4 @@
-package com.gymtracker.gym_api.application.dto.request.routine;
+package com.gymtracker.gym_api.application.dto.request.routine.rutina;
 
 import com.gymtracker.gym_api.domain.enums.TipoProgresion;
 import jakarta.validation.constraints.Size;

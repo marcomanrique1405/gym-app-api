@@ -1,4 +1,4 @@
-package com.gymtracker.gym_api.infrastructure.entity.routine;
+package com.gymtracker.gym_api.infrastructure.entity.routine.rutina;
 
 import com.gymtracker.gym_api.domain.enums.TipoProgresion;
 import jakarta.persistence.*;

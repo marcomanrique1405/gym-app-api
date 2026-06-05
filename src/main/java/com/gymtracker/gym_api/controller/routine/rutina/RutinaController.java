@@ -1,8 +1,8 @@
-package com.gymtracker.gym_api.controller.routine;
+package com.gymtracker.gym_api.controller.routine.rutina;
 
-import com.gymtracker.gym_api.application.dto.request.routine.CreateRutinaRequest;
-import com.gymtracker.gym_api.application.dto.request.routine.UpdateRutinaRequest;
-import com.gymtracker.gym_api.application.dto.response.routine.RutinaResponse;
+import com.gymtracker.gym_api.application.dto.request.routine.rutina.CreateRutinaRequest;
+import com.gymtracker.gym_api.application.dto.request.routine.rutina.UpdateRutinaRequest;
+import com.gymtracker.gym_api.application.dto.response.routine.rutina.RutinaResponse;
 import com.gymtracker.gym_api.application.usecase.routine.rutina.CreateRutinaUseCase;
 import com.gymtracker.gym_api.application.usecase.routine.rutina.DeleteRutinaUseCase;
 import com.gymtracker.gym_api.application.usecase.routine.rutina.GetRutinaByIdUseCase;

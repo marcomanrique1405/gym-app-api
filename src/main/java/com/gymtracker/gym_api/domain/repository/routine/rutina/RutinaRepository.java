@@ -1,6 +1,6 @@
-package com.gymtracker.gym_api.domain.repository.routine;
+package com.gymtracker.gym_api.domain.repository.routine.rutina;
 
-import com.gymtracker.gym_api.domain.model.routine.Rutina;
+import com.gymtracker.gym_api.domain.model.routine.rutina.Rutina;
 
 import java.util.List;
 import java.util.Optional;

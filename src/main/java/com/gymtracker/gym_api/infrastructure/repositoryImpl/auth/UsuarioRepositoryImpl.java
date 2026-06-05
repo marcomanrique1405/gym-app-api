@@ -1,4 +1,4 @@
-package com.gymtracker.gym_api.infrastructure.repository.auth;
+package com.gymtracker.gym_api.infrastructure.repositoryImpl.auth;
 
 import com.gymtracker.gym_api.domain.model.auth.Usuario;
 import com.gymtracker.gym_api.domain.repository.auth.UsuarioRepository;

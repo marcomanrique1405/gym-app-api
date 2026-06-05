@@ -1,7 +1,7 @@
-package com.gymtracker.gym_api.infrastructure.mapper.routine;
+package com.gymtracker.gym_api.infrastructure.mapper.routine.rutina;
 
-import com.gymtracker.gym_api.domain.model.routine.Rutina;
-import com.gymtracker.gym_api.infrastructure.entity.routine.RutinaEntity;
+import com.gymtracker.gym_api.domain.model.routine.rutina.Rutina;
+import com.gymtracker.gym_api.infrastructure.entity.routine.rutina.RutinaEntity;
 import org.springframework.stereotype.Component;
 
 @Component

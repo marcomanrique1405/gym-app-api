@@ -10,6 +10,8 @@ public interface SerieEjercicioRutinaRepository {
 
     SerieEjercicioRutina save(SerieEjercicioRutina serieEjercicioRutina);
 
+    Optional<SerieEjercicioRutina> obtenerActivaPorId(UUID serieEjercicioRutinaId);
+
     List<SerieEjercicioRutina> obtenerActivasPorEjercicioRutinaId(UUID ejercicioRutinaId);
 
     Optional<SerieEjercicioRutina> obtenerActivaPorIdYEjercicioRutinaId(

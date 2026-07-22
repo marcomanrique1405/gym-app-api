@@ -36,6 +36,13 @@ public class SerieEjercicioRutinaRepositoryImpl implements SerieEjercicioRutinaR
     }
 
     @Override
+    public Optional<SerieEjercicioRutina> obtenerActivaPorId(UUID serieEjercicioRutinaId) {
+        return serieEjercicioRutinaJpaRepository.findById(serieEjercicioRutinaId)
+                .filter(SerieEjercicioRutinaEntity::isActivo)
+                .map(serieEjercicioRutinaMapper::toDomain);
+    }
+
+    @Override
     public List<SerieEjercicioRutina> obtenerActivasPorEjercicioRutinaId(UUID ejercicioRutinaId) {
         return serieEjercicioRutinaJpaRepository
                 .findByEjercicioRutinaIdAndActivoTrueOrderByOrdenAsc(ejercicioRutinaId)

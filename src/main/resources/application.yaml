@@ -2,9 +2,9 @@ spring:
   application:
     name: gym-api
   datasource:
-    url: jdbc:postgresql://localhost:5434/gymapp
-    username: postgres
-    password: marco123
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
@@ -18,7 +18,7 @@ server:
   port: ${SERVER_PORT:8081}
 
 jwt:
-  secret: "TXlTdXBlclNlY3JldEtleUZvckp3dEF1dGhlbnRpY2F0aW9uMTIzNDU2Nzg5MDEyMzQ1Njc4OTA="
+  secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION_MS:3600000}
 
 app:

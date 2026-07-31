@@ -34,6 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        return "/auth/login".equals(request.getServletPath())
+                || "/auth/register".equals(request.getServletPath());
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
@@ -50,8 +56,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             if (!jwtService.isTokenValid(token)) throw new IllegalArgumentException("Token inválido");
-            UUID userId = UUID.fromString(jwtService.extractUserId(token));
-            Rol tokenRole = Rol.valueOf(jwtService.extractRoleName(token));
+            String subject = requiredClaim(jwtService.extractUserId(token), "sub");
+            String role = requiredClaim(jwtService.extractRoleName(token), "role");
+            UUID userId = UUID.fromString(subject);
+            Rol tokenRole = Rol.valueOf(role);
             Usuario usuario = usuarioRepository.buscarPorId(userId)
                     .filter(user -> Boolean.TRUE.equals(user.getActivo()))
                     .orElseThrow(() -> new IllegalArgumentException("Usuario inválido"));
@@ -69,5 +77,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String requiredClaim(String value, String claimName) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Claim JWT ausente: " + claimName);
+        }
+        return value;
     }
 }

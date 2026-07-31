@@ -58,8 +58,37 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
+    void loginPublicoIgnoraTokenInvalido() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest("POST", "/auth/login");
+        request.setServletPath("/auth/login");
+        request.addHeader("Authorization", "Bearer token-invalido");
+
+        assertTrue(filter.shouldNotFilter(request));
+        verifyNoInteractions(jwtService, usuarioRepository);
+    }
+
+    @Test
     void rolDesconocidoDevuelve401() throws Exception {
         prepararToken("OWNER");
+        assertApiError401(ejecutar());
+        verifyNoInteractions(usuarioRepository);
+    }
+
+    @Test
+    void tokenSinSubjectDevuelve401() throws Exception {
+        when(jwtService.isTokenValid("token")).thenReturn(true);
+        when(jwtService.extractUserId("token")).thenReturn(null);
+
+        assertApiError401(ejecutar());
+        verifyNoInteractions(usuarioRepository);
+    }
+
+    @Test
+    void tokenSinRoleDevuelve401() throws Exception {
+        when(jwtService.isTokenValid("token")).thenReturn(true);
+        when(jwtService.extractUserId("token")).thenReturn(userId.toString());
+        when(jwtService.extractRoleName("token")).thenReturn(null);
+
         assertApiError401(ejecutar());
         verifyNoInteractions(usuarioRepository);
     }

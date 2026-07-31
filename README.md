@@ -22,7 +22,9 @@ Producción requiere `SPRING_PROFILES_ACTIVE=prod` y todas las variables anterio
 
 ## Base de datos
 
-La API usa la base PostgreSQL existente. Ejecute una vez `scripts/update-existing-schema.sql` para aplicar índices y restricciones sin crear tablas ni borrar datos. Hibernate usa `ddl-auto=validate`; producción mantiene `show-sql=false`. Los índices parciales permiten reutilizar nombres y órdenes después del borrado lógico y garantizan una sola sesión activa por usuario.
+La API usa una base PostgreSQL existente y **no ejecuta migraciones automáticamente**. Antes de desplegar esta versión, ejecute manualmente una vez `scripts/update-existing-schema.sql` para aplicar índices y restricciones sin crear tablas ni borrar datos. Hibernate usa `ddl-auto=validate`, por lo que una base nueva o pendiente de actualización puede impedir el arranque; este script no sustituye un mecanismo de creación inicial del esquema. Producción mantiene `show-sql=false`. Los índices parciales permiten reutilizar nombres y órdenes después del borrado lógico y garantizan una sola sesión activa por usuario.
+
+Pruebe primero el script sobre una copia o respaldo reciente de PostgreSQL y conserve como evidencia la salida de `psql` y las consultas de verificación incluidas al final del archivo. La aplicación deliberadamente mantiene este procedimiento manual; no se incorpora Flyway/Liquibase ni se modifica la base automáticamente.
 
 Los días se eliminan físicamente. Si tienen dependencias, PostgreSQL rechaza la eliminación y la API responde `409` sin exponer detalles SQL.
 
@@ -75,4 +77,4 @@ Todos los errores usan `ApiError`: `timestamp`, `status`, `error`, `message` y `
 ./mvnw clean verify
 ```
 
-Las pruebas normales usan H2 con el perfil `test`. El script de actualización fue validado contra PostgreSQL local; para CI se recomienda añadir Testcontainers para comprobar estas restricciones en un servidor desechable.
+Las pruebas normales usan H2 con el perfil `test`; no validan los índices parciales ni la ejecución del script manual de PostgreSQL. Para CI se recomienda añadir Testcontainers y ejecutar allí `scripts/update-existing-schema.sql` antes de afirmar que esas restricciones fueron verificadas.

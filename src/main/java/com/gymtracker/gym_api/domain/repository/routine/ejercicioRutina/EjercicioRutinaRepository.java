@@ -14,7 +14,12 @@ public interface EjercicioRutinaRepository {
 
     Optional<EjercicioRutina> obtenerActivoPorIdYDiaRutinaId(UUID ejercicioRutinaId, UUID diaRutinaId);
 
+    Optional<EjercicioRutina> obtenerActivoPorId(UUID ejercicioRutinaId);
+
     boolean existeActivoPorDiaRutinaIdYEjercicioId(UUID diaRutinaId, UUID ejercicioId);
+
+    boolean existeActivoPorDiaRutinaIdYEjercicioIdExcluyendoId(
+            UUID diaRutinaId, UUID ejercicioId, UUID ejercicioRutinaId);
 
     boolean existeActivoPorDiaRutinaIdYOrden(UUID diaRutinaId, int orden);
 

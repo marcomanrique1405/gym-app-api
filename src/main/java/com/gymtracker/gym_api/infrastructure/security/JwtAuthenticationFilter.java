@@ -1,5 +1,10 @@
 package com.gymtracker.gym_api.infrastructure.security;
 
+import com.gymtracker.gym_api.domain.enums.Rol;
+import io.jsonwebtoken.JwtException;
+import com.gymtracker.gym_api.domain.model.auth.Usuario;
+import com.gymtracker.gym_api.domain.repository.auth.UsuarioRepository;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,14 +17,20 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UsuarioRepository usuarioRepository,
+                                   RestAuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtService = jwtService;
+        this.usuarioRepository = usuarioRepository;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
@@ -37,26 +48,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = authHeader.substring(7);
 
-        if (!jwtService.isTokenValid(token)) {
-            filterChain.doFilter(request, response);
+        try {
+            if (!jwtService.isTokenValid(token)) throw new IllegalArgumentException("Token inválido");
+            UUID userId = UUID.fromString(jwtService.extractUserId(token));
+            Rol tokenRole = Rol.valueOf(jwtService.extractRoleName(token));
+            Usuario usuario = usuarioRepository.buscarPorId(userId)
+                    .filter(user -> Boolean.TRUE.equals(user.getActivo()))
+                    .orElseThrow(() -> new IllegalArgumentException("Usuario inválido"));
+            if (usuario.getRol() != tokenRole) throw new IllegalArgumentException("Rol inválido");
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    userId.toString(), null,
+                    List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name())));
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch (JwtException | IllegalArgumentException exception) {
+            SecurityContextHolder.clearContext();
+            authenticationEntryPoint.commence(request, response, null);
             return;
-        }
-
-        String userId = jwtService.extractUserId(token);
-        String role = jwtService.extractRoleName(token);
-
-        SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority("ROLE_" + role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        userId,
-                        null,
-                        List.of(authority)
-                );
-
-        if (SecurityContextHolder.getContext().getAuthentication() == null) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);

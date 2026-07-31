@@ -37,7 +37,7 @@ public class RegisterUserUseCase {
 
         Usuario usuario = Usuario.builder()
                 .id(UUID.randomUUID())
-                .nombre(request.getNombre())
+                .nombre(request.getNombre().trim())
                 .email(email)
                 .password(passwordEncriptada)
                 .fechaRegistro(LocalDateTime.now())

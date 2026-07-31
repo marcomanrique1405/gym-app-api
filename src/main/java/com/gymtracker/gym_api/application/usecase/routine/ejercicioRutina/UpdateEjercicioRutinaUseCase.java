@@ -46,7 +46,6 @@ public class UpdateEjercicioRutinaUseCase {
 
     public EjercicioRutinaResponse update(
             UUID rutinaId,
-            UUID diaRutinaId,
             UUID ejercicioRutinaId,
             UpdateEjercicioRutinaRequest request
     ) {
@@ -60,12 +59,11 @@ public class UpdateEjercicioRutinaUseCase {
             throw new RoutineNotFoundException();
         }
 
-        DiaRutina diaRutinaActual = diaRutinaRepository
-                .obtenerPorIdYRutinaId(diaRutinaId, rutina.getId())
-                .orElseThrow(DiaRutinaNotFoundException::new);
-
         EjercicioRutina ejercicioRutinaActual = ejercicioRutinaRepository
-                .obtenerActivoPorIdYDiaRutinaId(ejercicioRutinaId, diaRutinaActual.getId())
+                .obtenerActivoPorId(ejercicioRutinaId)
+                .orElseThrow(EjercicioRutinaNotFoundException::new);
+
+        diaRutinaRepository.obtenerPorIdYRutinaId(ejercicioRutinaActual.getDiaRutinaId(), rutina.getId())
                 .orElseThrow(EjercicioRutinaNotFoundException::new);
 
         UUID diaRutinaIdFinal = request.getDiaRutinaId() != null
@@ -82,12 +80,15 @@ public class UpdateEjercicioRutinaUseCase {
                 ? request.getEjercicioId()
                 : ejercicioRutinaActual.getEjercicioId();
 
-        if (!ejercicioIdFinal.equals(ejercicioRutinaActual.getEjercicioId())) {
-            Ejercicio ejercicio = ejercicioRepository
-                    .obtenerPorId(ejercicioIdFinal)
-                    .orElseThrow(EjercicioNotFoundException::new);
+        Ejercicio ejercicioFinal = ejercicioRepository
+                .obtenerPorId(ejercicioIdFinal)
+                .filter(Ejercicio::getActivo)
+                .orElseThrow(EjercicioNotFoundException::new);
+        ejercicioIdFinal = ejercicioFinal.getId();
 
-            ejercicioIdFinal = ejercicio.getId();
+        if (ejercicioRutinaRepository.existeActivoPorDiaRutinaIdYEjercicioIdExcluyendoId(
+                diaRutinaIdFinal, ejercicioIdFinal, ejercicioRutinaActual.getId())) {
+            throw new EjercicioRutinaAlreadyExistsException();
         }
 
         Integer ordenFinal = request.getOrden() != null

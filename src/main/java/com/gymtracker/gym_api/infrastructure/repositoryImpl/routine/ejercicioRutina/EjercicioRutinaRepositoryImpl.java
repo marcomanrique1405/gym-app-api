@@ -52,9 +52,23 @@ public class EjercicioRutinaRepositoryImpl implements EjercicioRutinaRepository 
     }
 
     @Override
+    public Optional<EjercicioRutina> obtenerActivoPorId(UUID ejercicioRutinaId) {
+        return ejercicioRutinaJpaRepository.findByIdAndActivoTrue(ejercicioRutinaId)
+                .map(ejercicioRutinaMapper::toDomain);
+    }
+
+    @Override
     public boolean existeActivoPorDiaRutinaIdYEjercicioId(UUID diaRutinaId, UUID ejercicioId) {
         return ejercicioRutinaJpaRepository
                 .existsByDiaRutinaIdAndEjercicioIdAndActivoTrue(diaRutinaId, ejercicioId);
+    }
+
+    @Override
+    public boolean existeActivoPorDiaRutinaIdYEjercicioIdExcluyendoId(
+            UUID diaRutinaId, UUID ejercicioId, UUID ejercicioRutinaId) {
+        return ejercicioRutinaJpaRepository
+                .existsByDiaRutinaIdAndEjercicioIdAndActivoTrueAndIdNot(
+                        diaRutinaId, ejercicioId, ejercicioRutinaId);
     }
 
     @Override

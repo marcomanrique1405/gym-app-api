@@ -22,19 +22,19 @@ public class SesionEntrenamientoEntity {
     @Column(name = "sesion_entrenamiento_id")
     private UUID id;
 
-    @Column(name = "usuario_id")
+    @Column(name = "usuario_id", nullable = false)
     private UUID usuarioId;
 
-    @Column(name = "rutina_id")
+    @Column(name = "rutina_id", nullable = false)
     private UUID rutinaId;
 
-    @Column(name = "fecha_inicio")
+    @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
 
     @Column(name = "fecha_fin")
     private LocalDateTime fechaFin;
 
-    @Column(name = "finalizada")
+    @Column(name = "finalizada", nullable = false)
     private boolean finalizada;
 
 }

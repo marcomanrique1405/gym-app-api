@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public interface EjercicioRutinaJpaRepository extends JpaRepository<EjercicioRutinaEntity, UUID> {
 
+    Optional<EjercicioRutinaEntity> findByIdAndActivoTrue(UUID id);
+
     List<EjercicioRutinaEntity> findByDiaRutinaIdAndActivoTrueOrderByOrdenAsc(UUID diaRutinaId);
 
     Optional<EjercicioRutinaEntity> findByIdAndDiaRutinaIdAndActivoTrue(
@@ -20,6 +22,9 @@ public interface EjercicioRutinaJpaRepository extends JpaRepository<EjercicioRut
             UUID diaRutinaId,
             UUID ejercicioId
     );
+
+    boolean existsByDiaRutinaIdAndEjercicioIdAndActivoTrueAndIdNot(
+            UUID diaRutinaId, UUID ejercicioId, UUID id);
 
     boolean existsByDiaRutinaIdAndOrdenAndActivoTrue(
             UUID diaRutinaId,

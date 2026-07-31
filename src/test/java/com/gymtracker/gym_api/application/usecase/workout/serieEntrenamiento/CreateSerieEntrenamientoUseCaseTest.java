@@ -49,6 +49,8 @@ class CreateSerieEntrenamientoUseCaseTest {
         stubSesion(false);
         when(serieEjercicioRutinaRepository.obtenerActivaPorId(serieRutinaId))
                 .thenReturn(Optional.of(serieRutina()));
+        when(serieEjercicioRutinaRepository.perteneceActivaARutina(serieRutinaId, rutinaId))
+                .thenReturn(true);
         when(serieEntrenamientoRepository
                 .existePorSesionEntrenamientoIdYSerieEjercicioRutinaId(sesionId, serieRutinaId))
                 .thenReturn(false);
@@ -103,11 +105,27 @@ class CreateSerieEntrenamientoUseCaseTest {
         stubSesion(false);
         when(serieEjercicioRutinaRepository.obtenerActivaPorId(serieRutinaId))
                 .thenReturn(Optional.of(serieRutina()));
+        when(serieEjercicioRutinaRepository.perteneceActivaARutina(serieRutinaId, rutinaId))
+                .thenReturn(true);
         when(serieEntrenamientoRepository
                 .existePorSesionEntrenamientoIdYSerieEjercicioRutinaId(sesionId, serieRutinaId))
                 .thenReturn(true);
 
         assertThrows(SerieEntrenamientoAlreadyExistsException.class,
+                () -> useCase.crear(sesionId, request()));
+
+        verify(serieEntrenamientoRepository, never()).save(any());
+    }
+
+    @Test
+    void rechazaSerieActivaDeOtraRutina() {
+        stubSesion(false);
+        when(serieEjercicioRutinaRepository.obtenerActivaPorId(serieRutinaId))
+                .thenReturn(Optional.of(serieRutina()));
+        when(serieEjercicioRutinaRepository.perteneceActivaARutina(serieRutinaId, rutinaId))
+                .thenReturn(false);
+
+        assertThrows(SerieEjercicioRutinaNotFoundException.class,
                 () -> useCase.crear(sesionId, request()));
 
         verify(serieEntrenamientoRepository, never()).save(any());

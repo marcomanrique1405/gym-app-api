@@ -25,4 +25,6 @@ public interface SerieEjercicioRutinaRepository {
     );
 
     int contarActivasPorEjercicioRutinaId(UUID ejercicioRutinaId);
+
+    boolean perteneceActivaARutina(UUID serieEjercicioRutinaId, UUID rutinaId);
 }

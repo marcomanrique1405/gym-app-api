@@ -4,7 +4,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,15 +12,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "ejercicios_rutina",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_ejercicio_rutina_dia_orden",
-                        columnNames = {"dia_rutina_id", "orden"}
-                )
-        }
-)
+@Table(name = "ejercicios_rutina")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

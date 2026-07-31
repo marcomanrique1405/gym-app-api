@@ -9,6 +9,7 @@ import com.gymtracker.gym_api.application.usecase.routine.diaRutina.GetDiasRutin
 import com.gymtracker.gym_api.application.usecase.routine.diaRutina.UpdateDiaRutinaUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/rutinas/{rutinaId}/dias")
+@PreAuthorize("hasAnyRole('ADMIN','USER')")
 public class DiaRutinaController {
 
     private final CreateDiaRutinaUseCase createDiaRutinaUseCase;
@@ -57,8 +59,8 @@ public class DiaRutinaController {
     }
 
 
-    @PutMapping("/{diaRutinaId}")
-    public ResponseEntity<DiaRutinaResponse> actualizarDiaRutina(@PathVariable UUID rutinaId, @PathVariable UUID diaRutinaId, @RequestBody UpdateDiaRutinaRequest request) {
+    @PatchMapping("/{diaRutinaId}")
+    public ResponseEntity<DiaRutinaResponse> actualizarDiaRutina(@PathVariable UUID rutinaId, @PathVariable UUID diaRutinaId, @Valid @RequestBody UpdateDiaRutinaRequest request) {
         return ResponseEntity.ok(
                 updateDiaRutinaUseCase.update(rutinaId, diaRutinaId, request)
         );

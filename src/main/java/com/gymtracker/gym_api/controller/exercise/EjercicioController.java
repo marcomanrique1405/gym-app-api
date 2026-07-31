@@ -9,6 +9,7 @@ import com.gymtracker.gym_api.application.usecase.exercise.UpdateEjercicioUseCas
 import com.gymtracker.gym_api.domain.enums.GrupoMuscular;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -30,6 +31,7 @@ public class EjercicioController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EjercicioResponse> crear(@Valid @RequestBody EjercicioRequest request) {
         EjercicioResponse response = createEjercicioUseCase.guardar(request);
 
@@ -41,6 +43,7 @@ public class EjercicioController {
     }
 
     @GetMapping("/{grupoMuscular}")
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     public ResponseEntity<List<EjercicioResponse>> obtenerPorGrupoMuscular(@PathVariable GrupoMuscular grupoMuscular) {
         return ResponseEntity.ok(
                 getEjerciciosPorGrupoMuscular.obtnerEjerciciosPorGrupoMuscular(grupoMuscular)
@@ -48,7 +51,8 @@ public class EjercicioController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<EjercicioResponse> actualizarEjercicio(@PathVariable UUID id,@RequestBody UpdateEjercicioRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<EjercicioResponse> actualizarEjercicio(@PathVariable UUID id,@Valid @RequestBody UpdateEjercicioRequest request) {
         return ResponseEntity.ok(
                 updateEjercicioUseCase.actualiazarEjercicio(id, request)
         );

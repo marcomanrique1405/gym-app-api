@@ -36,7 +36,7 @@ public class RutinaRepositoryImpl implements RutinaRepository {
 
     @Override
     public boolean existePorUsuarioIdYNombre(UUID usuarioId, String nombre) {
-        return rutinaJpaRepository.existsByUsuarioIdAndNombre(usuarioId, nombre);
+        return rutinaJpaRepository.existsByUsuarioIdAndNombreIgnoreCaseAndActivaTrue(usuarioId, nombre);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RutinaRepositoryImpl implements RutinaRepository {
     @Override
     public Optional<Rutina> obtenerPorIdYUsuarioId(UUID id, UUID usuarioId) {
         return rutinaJpaRepository
-                .findByIdAndUsuarioId(id, usuarioId)
+                .findByIdAndUsuarioIdAndActivaTrue(id, usuarioId)
                 .map(rutinaMapper::toDomain);
     }
 

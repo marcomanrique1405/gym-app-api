@@ -5,6 +5,7 @@ import com.gymtracker.gym_api.application.dto.response.exercise.EjercicioRespons
 import com.gymtracker.gym_api.domain.model.exercise.Ejercicio;
 import com.gymtracker.gym_api.domain.repository.exercise.EjercicioRepository;
 import com.gymtracker.gym_api.shared.exception.exercise.EjercicioNotFoundException;
+import com.gymtracker.gym_api.shared.exception.exercise.EjercicioAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -27,16 +28,22 @@ public class UpdateEjercicioUseCase {
             throw new EjercicioNotFoundException();
         }
 
-        if (ejercicio.getNombre() != null) {
-            ejercicio.setNombre(request.getNombre());
+        if (request.getNombre() != null) {
+            String nombre = request.getNombre().trim();
+            if (nombre.isEmpty()) throw new IllegalArgumentException("El nombre no puede estar vacío");
+            if (!nombre.equalsIgnoreCase(ejercicio.getNombre())
+                    && ejercicioRepository.existePorNombreYActiva(nombre)) {
+                throw new EjercicioAlreadyExistsException();
+            }
+            ejercicio.setNombre(nombre);
         }
 
-        if (ejercicio.getGrupoMuscular() != null) {
+        if (request.getGrupoMuscular() != null) {
             ejercicio.setGrupoMuscular(request.getGrupoMuscular());
         }
 
-        if (ejercicio.getDescripcion() != null) {
-            ejercicio.setDescripcion(request.getDescripcion());
+        if (request.getDescripcion() != null) {
+            ejercicio.setDescripcion(request.getDescripcion().trim());
         }
 
         Ejercicio ejercicioSave = ejercicioRepository.save(ejercicio);

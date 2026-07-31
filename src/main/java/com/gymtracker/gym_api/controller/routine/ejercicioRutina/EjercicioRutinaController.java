@@ -8,6 +8,7 @@ import com.gymtracker.gym_api.application.usecase.routine.ejercicioRutina.Delete
 import com.gymtracker.gym_api.application.usecase.routine.ejercicioRutina.UpdateEjercicioRutinaUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/rutinas/{rutinaId}/ejercicios-rutina")
+@PreAuthorize("hasAnyRole('ADMIN','USER')")
 public class EjercicioRutinaController {
 
     private final CreateEjercicioRutinaUseCase createEjercicioRutinaUseCase;
@@ -57,7 +59,6 @@ public class EjercicioRutinaController {
     ) {
         EjercicioRutinaResponse response = updateEjercicioRutinaUseCase.update(
                 rutinaId,
-                request.getDiaRutinaId(),
                 ejercicioRutinaId,
                 request
         );

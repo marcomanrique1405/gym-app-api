@@ -71,4 +71,9 @@ public class SerieEjercicioRutinaRepositoryImpl implements SerieEjercicioRutinaR
     public int contarActivasPorEjercicioRutinaId(UUID ejercicioRutinaId) {
         return serieEjercicioRutinaJpaRepository.countByEjercicioRutinaIdAndActivoTrue(ejercicioRutinaId);
     }
+
+    @Override
+    public boolean perteneceActivaARutina(UUID serieEjercicioRutinaId, UUID rutinaId) {
+        return serieEjercicioRutinaJpaRepository.perteneceActivaARutina(serieEjercicioRutinaId, rutinaId);
+    }
 }

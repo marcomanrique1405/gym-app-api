@@ -8,6 +8,7 @@ import com.gymtracker.gym_api.application.usecase.workout.serieEntrenamiento.Get
 import com.gymtracker.gym_api.application.usecase.workout.serieEntrenamiento.UpdateSerieEntrenamientoUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/sesiones-entrenamiento/{sesionEntrenamientoId}/series")
+@PreAuthorize("hasAnyRole('ADMIN','USER')")
 public class SerieEntrenamientoController {
 
     private final CreateSerieEntrenamientoUseCase createSerieEntrenamientoUseCase;

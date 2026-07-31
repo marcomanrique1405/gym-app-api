@@ -62,6 +62,13 @@ public class CreateEjercicioRutinaUseCase {
                 .obtenerPorId(request.getEjercicioId())
                 .orElseThrow(EjercicioNotFoundException::new);
 
+        if (!ejercicio.getActivo()) throw new EjercicioNotFoundException();
+
+        if (ejercicioRutinaRepository.existeActivoPorDiaRutinaIdYEjercicioId(
+                diaRutina.getId(), ejercicio.getId())) {
+            throw new EjercicioRutinaAlreadyExistsException();
+        }
+
         boolean existeOrden = ejercicioRutinaRepository
                 .existeActivoPorDiaRutinaIdYOrden(diaRutina.getId(), request.getOrden());
 

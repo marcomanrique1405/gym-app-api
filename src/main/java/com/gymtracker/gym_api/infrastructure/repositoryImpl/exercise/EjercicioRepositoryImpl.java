@@ -47,7 +47,7 @@ public class EjercicioRepositoryImpl implements EjercicioRepository {
 
     @Override
     public boolean existePorNombreYActiva(String nombre) {
-        return ejercicioJpaRepository.existsByNombreAndActivoTrue(nombre);
+        return ejercicioJpaRepository.existsByNombreIgnoreCaseAndActivoTrue(nombre);
     }
 
     @Override

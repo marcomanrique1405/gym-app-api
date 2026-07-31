@@ -31,6 +31,6 @@ public class SerieEntrenamientoEntity {
     @Column(name = "repeticiones_realizadas", nullable = false)
     private Integer repeticionesRealizadas;
 
-    @Column(name = "peso_utilizado", precision = 10, scale = 2)
+    @Column(name = "peso_utilizado", nullable = false, precision = 10, scale = 2)
     private BigDecimal pesoUtilizado;
 }

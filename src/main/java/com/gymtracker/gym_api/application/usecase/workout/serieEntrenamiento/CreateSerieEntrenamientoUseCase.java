@@ -53,6 +53,11 @@ public class CreateSerieEntrenamientoUseCase {
         serieEjercicioRutinaRepository.obtenerActivaPorId(request.getSerieEjercicioRutinaId())
                 .orElseThrow(SerieEjercicioRutinaNotFoundException::new);
 
+        if (!serieEjercicioRutinaRepository.perteneceActivaARutina(
+                request.getSerieEjercicioRutinaId(), sesion.getRutinaId())) {
+            throw new SerieEjercicioRutinaNotFoundException();
+        }
+
         if (serieEntrenamientoRepository
                 .existePorSesionEntrenamientoIdYSerieEjercicioRutinaId(
                         sesion.getId(),

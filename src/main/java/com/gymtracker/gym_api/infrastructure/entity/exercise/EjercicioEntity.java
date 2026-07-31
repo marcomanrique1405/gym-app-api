@@ -9,15 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "ejercicios",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uk_ejercicio_nombre",
-                        columnNames = "nombre"
-                )
-        }
-)
+@Table(name = "ejercicios")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

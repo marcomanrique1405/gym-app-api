@@ -2,9 +2,37 @@
 
 API de gimnasio con Spring Boot, PostgreSQL, JWT y los roles exclusivos `ADMIN` y `USER`.
 
+## Requisitos
+
+- Java 17
+- PostgreSQL
+- Git
+
+No es necesario instalar Maven: el repositorio incluye Maven Wrapper.
+
 ## Configuración local
 
-No hay credenciales ni secretos predeterminados rastreados. Copie `.env.example` a un archivo local no versionado o exporte las variables en su terminal:
+No hay credenciales ni secretos predeterminados rastreados. `.env.example` documenta las variables requeridas, pero Spring Boot no carga automáticamente un archivo `.env`; defina las variables en su terminal o en la configuración de ejecución de su IDE.
+
+### PowerShell (Windows)
+
+```powershell
+$env:SPRING_PROFILES_ACTIVE='dev'
+$env:DB_URL='jdbc:postgresql://localhost:5432/gymapp'
+$env:DB_USERNAME='gymapp_dev'
+$env:DB_PASSWORD='contraseña-local'
+$env:JWT_SECRET='<secreto-base64-de-al-menos-32-bytes>'
+$env:CORS_ALLOWED_ORIGINS='http://localhost:3000,http://localhost:5173'
+.\mvnw.cmd spring-boot:run
+```
+
+Genere `JWT_SECRET` con una herramienta criptográficamente segura. Por ejemplo, con OpenSSL:
+
+```powershell
+openssl rand -base64 32
+```
+
+### Bash (Linux/macOS)
 
 ```bash
 export SPRING_PROFILES_ACTIVE=dev
@@ -73,8 +101,18 @@ Todos los errores usan `ApiError`: `timestamp`, `status`, `error`, `message` y `
 
 ## Verificación
 
+En Windows:
+
+```powershell
+.\mvnw.cmd clean verify
+```
+
+En Linux/macOS:
+
 ```bash
 ./mvnw clean verify
 ```
+
+La línea base actual ejecuta 19 suites con 84 pruebas, sin fallos, errores ni pruebas omitidas.
 
 Las pruebas normales usan H2 con el perfil `test`; no validan los índices parciales ni la ejecución del script manual de PostgreSQL. Para CI se recomienda añadir Testcontainers y ejecutar allí `scripts/update-existing-schema.sql` antes de afirmar que esas restricciones fueron verificadas.

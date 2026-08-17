@@ -50,9 +50,13 @@ Producción requiere `SPRING_PROFILES_ACTIVE=prod` y todas las variables anterio
 
 ## Base de datos
 
-La API usa una base PostgreSQL existente y **no ejecuta migraciones automáticamente**. Antes de desplegar esta versión, ejecute manualmente una vez `scripts/update-existing-schema.sql` para aplicar índices y restricciones sin crear tablas ni borrar datos. Hibernate usa `ddl-auto=validate`, por lo que una base nueva o pendiente de actualización puede impedir el arranque; este script no sustituye un mecanismo de creación inicial del esquema. Producción mantiene `show-sql=false`. Los índices parciales permiten reutilizar nombres y órdenes después del borrado lógico y garantizan una sola sesión activa por usuario.
+La API administra el esquema con Flyway. Al iniciar contra una base PostgreSQL vacía, Flyway ejecuta `V1__create_initial_schema.sql`, crea las tablas, relaciones, índices y restricciones, y registra el resultado en `flyway_schema_history`. Después, Hibernate usa `ddl-auto=validate` para comprobar que el esquema coincide con las entidades sin modificarlo. Producción mantiene `show-sql=false`.
 
-Pruebe primero el script sobre una copia o respaldo reciente de PostgreSQL y conserve como evidencia la salida de `psql` y las consultas de verificación incluidas al final del archivo. La aplicación deliberadamente mantiene este procedimiento manual; no se incorpora Flyway/Liquibase ni se modifica la base automáticamente.
+Una migración compartida no debe editarse después de aplicarse en entornos persistentes: los cambios posteriores del esquema deben agregarse como `V2`, `V3`, etc. Antes de fusionar una modificación de V1, debe probarse desde una base PostgreSQL 16 vacía, confirmar su registro exitoso en `flyway_schema_history` y comprobar que Hibernate valida el esquema.
+
+Una base creada antes de incorporar Flyway no debe conectarse directamente esperando que V1 se aplique sobre tablas existentes. Si sus datos son prescindibles, la opción recomendada para desarrollo es respaldar lo necesario y recrear la base para que Flyway la construya desde cero. `scripts/update-existing-schema.sql` se conserva únicamente como apoyo legado para preparar una base anterior; no registra un baseline y no debe ejecutarse sobre una base ya administrada por Flyway. El proyecto no activa `baseline-on-migrate` automáticamente porque podría aceptar por error un esquema incompatible.
+
+Los índices únicos parciales permiten reutilizar nombres y órdenes después del borrado lógico. PostgreSQL también garantiza, entre otras reglas, una sola sesión activa por usuario, una sola captura por serie y sesión, rangos válidos de repeticiones y fechas de sesión consistentes.
 
 Los días se eliminan físicamente. Si tienen dependencias, PostgreSQL rechaza la eliminación y la API responde `409` sin exponer detalles SQL.
 
@@ -115,4 +119,4 @@ En Linux/macOS:
 
 La línea base actual ejecuta 19 suites con 84 pruebas, sin fallos, errores ni pruebas omitidas.
 
-Las pruebas normales usan H2 con el perfil `test`; no validan los índices parciales ni la ejecución del script manual de PostgreSQL. Para CI se recomienda añadir Testcontainers y ejecutar allí `scripts/update-existing-schema.sql` antes de afirmar que esas restricciones fueron verificadas.
+Las pruebas normales usan H2 con el perfil `test` y Flyway desactivado, porque H2 no reproduce fielmente los índices parciales específicos de PostgreSQL. La migración y esas restricciones se validan sobre PostgreSQL 16. Como mejora futura, CI puede automatizar esa comprobación mediante Testcontainers.

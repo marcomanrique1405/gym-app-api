@@ -7,7 +7,6 @@ CREATE TABLE usuarios (
     rol VARCHAR(255) NOT NULL,
     activo BOOLEAN NOT NULL,
     CONSTRAINT pk_usuarios PRIMARY KEY (usuario_id),
-    CONSTRAINT uk_usuarios_email UNIQUE (email),
     CONSTRAINT ck_usuarios_rol CHECK (rol IN ('USER', 'ADMIN'))
 );
 
@@ -81,7 +80,12 @@ CREATE TABLE series_rutina (
     CONSTRAINT pk_series_rutina PRIMARY KEY (serie_rutina_id),
     CONSTRAINT fk_series_rutina_ejercicio_rutina
         FOREIGN KEY (ejercicio_rutina_id)
-        REFERENCES ejercicios_rutina (ejercicio_rutina_id) ON DELETE RESTRICT
+        REFERENCES ejercicios_rutina (ejercicio_rutina_id) ON DELETE RESTRICT,
+    CONSTRAINT ck_serie_rutina_valores CHECK (
+        orden > 0
+        AND repeticiones_min > 0
+        AND repeticiones_max >= repeticiones_min
+    )
 );
 
 CREATE TABLE sesion_entrenamiento (
@@ -95,7 +99,10 @@ CREATE TABLE sesion_entrenamiento (
     CONSTRAINT fk_sesion_entrenamiento_usuario FOREIGN KEY (usuario_id)
         REFERENCES usuarios (usuario_id) ON DELETE RESTRICT,
     CONSTRAINT fk_sesion_entrenamiento_rutina FOREIGN KEY (rutina_id)
-        REFERENCES rutinas (rutina_id) ON DELETE RESTRICT
+        REFERENCES rutinas (rutina_id) ON DELETE RESTRICT,
+    CONSTRAINT ck_sesion_fechas CHECK (
+        fecha_fin IS NULL OR fecha_fin >= fecha_inicio
+    )
 );
 
 CREATE TABLE series_entrenamiento (
@@ -111,8 +118,28 @@ CREATE TABLE series_entrenamiento (
         ON DELETE RESTRICT,
     CONSTRAINT fk_series_entrenamiento_serie_rutina
         FOREIGN KEY (serie_rutina_id)
-        REFERENCES series_rutina (serie_rutina_id) ON DELETE RESTRICT
+        REFERENCES series_rutina (serie_rutina_id) ON DELETE RESTRICT,
+    CONSTRAINT ck_serie_entrenamiento_valores CHECK (
+        repeticiones_realizadas > 0 AND peso_utilizado >= 0
+    )
 );
+
+CREATE UNIQUE INDEX uk_usuarios_email_normalizado
+    ON usuarios (lower(btrim(email)));
+CREATE UNIQUE INDEX uk_ejercicio_nombre_activo
+    ON ejercicios (lower(btrim(nombre))) WHERE activo = true;
+CREATE UNIQUE INDEX uk_rutina_usuario_nombre_activa
+    ON rutinas (usuario_id, lower(btrim(nombre))) WHERE activa = true;
+CREATE UNIQUE INDEX uk_ejercicio_rutina_dia_orden_activo
+    ON ejercicios_rutina (dia_rutina_id, orden) WHERE activo = true;
+CREATE UNIQUE INDEX uk_ejercicio_rutina_dia_ejercicio_activo
+    ON ejercicios_rutina (dia_rutina_id, ejercicio_id) WHERE activo = true;
+CREATE UNIQUE INDEX uk_serie_rutina_orden_activa
+    ON series_rutina (ejercicio_rutina_id, orden) WHERE activo = true;
+CREATE UNIQUE INDEX uk_sesion_usuario_activa
+    ON sesion_entrenamiento (usuario_id) WHERE finalizada = false;
+CREATE UNIQUE INDEX uk_serie_entrenamiento_sesion_serie
+    ON series_entrenamiento (sesion_entrenamiento_id, serie_rutina_id);
 
 CREATE INDEX ix_rutinas_usuario_id ON rutinas (usuario_id);
 CREATE INDEX ix_dias_rutina_rutina_id ON dias_rutina (rutina_id);

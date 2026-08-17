@@ -8,6 +8,8 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: false
+  flyway:
+    enabled: false
 
 jwt:
   secret: dGVzdC1vbmx5LWp3dC1rZXktMzItYnl0ZXMtbWluaW11bS1ub3QtcHJvZHVjdGlvbg==

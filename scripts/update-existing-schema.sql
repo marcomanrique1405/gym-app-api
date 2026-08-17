@@ -1,4 +1,5 @@
--- Ajustes manuales para la base PostgreSQL EXISTENTE de gym-api.
+-- LEGACY: ajustes manuales para bases PostgreSQL creadas antes de Flyway V1.
+-- No ejecute este script sobre una base que ya administre Flyway.
 -- No crea tablas, no elimina registros y puede ejecutarse más de una vez.
 -- Haga un respaldo antes de aplicarlo.
 
@@ -68,7 +69,3 @@ HAVING count(*) > 1;
 -- Después de sanear el resultado anterior, puede reforzarlo también en BD:
 -- CREATE UNIQUE INDEX uk_ejercicio_rutina_dia_ejercicio_activo
 --     ON ejercicios_rutina (dia_rutina_id, ejercicio_id) WHERE activo = true;
-
--- Si anteriormente se alcanzó a ejecutar Flyway solo para esta revisión y no lo usa
--- ningún otro sistema, puede retirar manualmente su tabla de metadatos:
--- DROP TABLE IF EXISTS flyway_schema_history;

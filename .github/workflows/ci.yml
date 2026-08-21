@@ -29,3 +29,6 @@ jobs:
 
         - name: Build and run tests
           run: ./mvnw --batch-mode clean verify
+
+        - name: Build Docker image
+          run: docker build --tag gym-api:ci .

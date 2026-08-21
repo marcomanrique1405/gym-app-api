@@ -4,15 +4,45 @@ API de gimnasio con Spring Boot, PostgreSQL, JWT y los roles exclusivos `ADMIN` 
 
 ## Requisitos
 
-- Java 17
-- PostgreSQL
+- Docker con Docker Compose v2 (ejecución recomendada)
+- Java 17 y PostgreSQL (solo para ejecución sin Docker)
 - Git
 
 No es necesario instalar Maven: el repositorio incluye Maven Wrapper.
 
+## Docker Compose
+
+El entorno incluye PostgreSQL 16.12 y la API construida con Java 17. La imagen de la API usa una compilación multi-stage y ejecuta el proceso con un usuario sin privilegios. Compose no fija nombres de contenedor: el aislamiento y los nombres dependen del nombre de proyecto elegido.
+
+Prepare las variables locales; `.env` está ignorado por Git:
+
+```bash
+cp .env.example .env
+openssl rand -base64 32
+```
+
+Reemplace `POSTGRES_PASSWORD` y `JWT_SECRET` en `.env`. Luego valide y arranque:
+
+```bash
+docker compose config --quiet
+docker compose up --build --wait
+```
+
+La API queda disponible en `http://localhost:8081`, Swagger UI en `http://localhost:8081/swagger-ui/index.html` y el único endpoint Actuator expuesto es `http://localhost:8081/actuator/health`. PostgreSQL no publica un puerto al host. Sus datos se guardan en el volumen `<proyecto>_postgres-data` y sobreviven a `docker compose restart` y `docker compose down`.
+
+Para evitar afectar otros entornos, asigne siempre un nombre de proyecto durante pruebas aisladas:
+
+```bash
+docker compose -p gym-portfolio-test up --build --wait
+docker compose -p gym-portfolio-test ps
+docker compose -p gym-portfolio-test down -v
+```
+
+El último comando elimina exclusivamente los contenedores, la red y el volumen del proyecto `gym-portfolio-test`. No use `down -v` con otro nombre de proyecto si necesita conservar sus datos.
+
 ## Configuración local
 
-No hay credenciales ni secretos predeterminados rastreados. `.env.example` documenta las variables requeridas, pero Spring Boot no carga automáticamente un archivo `.env`; defina las variables en su terminal o en la configuración de ejecución de su IDE.
+No hay credenciales ni secretos predeterminados rastreados. `.env.example` documenta las variables requeridas. Compose carga `.env` automáticamente; Spring Boot ejecutado directamente no lo hace, por lo que en ese caso debe exportar `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` y las demás variables en su terminal o IDE.
 
 ### PowerShell (Windows)
 
@@ -119,4 +149,15 @@ En Linux/macOS:
 
 La línea base actual ejecuta 19 suites con 84 pruebas, sin fallos, errores ni pruebas omitidas.
 
-Las pruebas normales usan H2 con el perfil `test` y Flyway desactivado, porque H2 no reproduce fielmente los índices parciales específicos de PostgreSQL. La migración y esas restricciones se validan sobre PostgreSQL 16. Como mejora futura, CI puede automatizar esa comprobación mediante Testcontainers.
+La validación completa del entorno Docker se ejecuta en un proyecto aislado:
+
+```bash
+docker compose -p gym-portfolio-test config --quiet
+docker compose -p gym-portfolio-test build
+docker compose -p gym-portfolio-test up --wait
+docker compose -p gym-portfolio-test ps
+```
+
+Tras el arranque, `flyway_schema_history` debe registrar `V1` con `success=true`; los logs deben mostrar que Flyway aplicó la migración y que Hibernate validó el esquema. Compruebe también salud, Swagger, registro, login y un endpoint autenticado. Reinicie con `docker compose -p gym-portfolio-test restart`, espere a que los servicios vuelvan a estar saludables y confirme que el usuario registrado aún puede iniciar sesión.
+
+Las pruebas normales usan H2 con el perfil `test` y Flyway desactivado, porque H2 no reproduce fielmente los índices parciales específicos de PostgreSQL. La migración y esas restricciones se validan sobre PostgreSQL 16. CI ejecuta las pruebas Maven y construye la imagen Docker para detectar errores del empaquetado reproducible.

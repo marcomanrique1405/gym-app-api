@@ -10,7 +10,7 @@ API REST para planificar rutinas y registrar el progreso de entrenamiento de cad
 
 Más que un CRUD, este backend aplica reglas de propiedad, autorización por rol, migraciones versionadas, restricciones de integridad en PostgreSQL, manejo uniforme de errores y una separación clara entre dominio, casos de uso e infraestructura.
 
-> Estado: candidato a `v1.0.0`. La implementación fue validada con Java 17, PostgreSQL 16.12, Flyway 12.4, Docker Compose y **89 pruebas automatizadas**.
+> Estado: versión estable [`v1.0.0`](https://github.com/marcomanrique1405/gym-app-api/releases/tag/v1.0.0). La implementación fue validada con Java 17, PostgreSQL 16.12, Flyway 12.4, Docker Compose y **89 pruebas automatizadas**.
 
 ## Contenido
 

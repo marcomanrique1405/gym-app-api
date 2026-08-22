@@ -1,6 +1,7 @@
 package com.gymtracker.gym_api.application.dto.request.workout.serieEntrenamiento;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,6 @@ public class SerieEntrenamientoRequest {
 
     @NotNull(message = "El peso utilizado es obligatorio")
     @DecimalMin(value = "0.0", inclusive = true, message = "El peso utilizado no puede ser negativo")
+    @Digits(integer = 8, fraction = 2, message = "El peso utilizado debe tener máximo 8 dígitos enteros y 2 decimales")
     private BigDecimal pesoUtilizado;
 }

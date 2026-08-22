@@ -14,11 +14,19 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final SecretKey signingKey;
+    private final long expirationTime;
 
-    @Value("${jwt.expiration}")
-    private long expirationTime;
+    public JwtService(
+            @Value("${jwt.secret}") String secretKey,
+            @Value("${jwt.expiration}") long expirationTime
+    ) {
+        this.signingKey = createSigningKey(secretKey);
+        if (expirationTime <= 0) {
+            throw new IllegalStateException("jwt.expiration debe ser mayor que cero");
+        }
+        this.expirationTime = expirationTime;
+    }
 
     public String generateToken(String userId, String email, Rol rol) {
         return Jwts.builder()
@@ -27,7 +35,7 @@ public class JwtService {
                 .claim("role", rol.name())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSignKey())
+                .signWith(signingKey)
                 .compact();
     }
 
@@ -54,14 +62,25 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(getSignKey())
+                .verifyWith(signingKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
     }
 
-    private SecretKey getSignKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        return Keys.hmacShaKeyFor(keyBytes);
+    private static SecretKey createSigningKey(String encodedSecret) {
+        if (encodedSecret == null || encodedSecret.isBlank()) {
+            throw new IllegalStateException("jwt.secret es obligatorio");
+        }
+
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(encodedSecret);
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (RuntimeException ex) {
+            throw new IllegalStateException(
+                    "jwt.secret debe ser Base64 válido y representar al menos 32 bytes",
+                    ex
+            );
+        }
     }
 }

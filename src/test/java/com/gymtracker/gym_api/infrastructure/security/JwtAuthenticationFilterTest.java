@@ -1,7 +1,5 @@
 package com.gymtracker.gym_api.infrastructure.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.gymtracker.gym_api.domain.enums.Rol;
 import com.gymtracker.gym_api.domain.model.auth.Usuario;
 import com.gymtracker.gym_api.domain.repository.auth.UsuarioRepository;
@@ -15,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 import java.util.UUID;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -29,7 +28,7 @@ class JwtAuthenticationFilterTest {
     void setUp() {
         jwtService = mock(JwtService.class);
         usuarioRepository = mock(UsuarioRepository.class);
-        ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        JsonMapper mapper = JsonMapper.builder().build();
         RestAuthenticationEntryPoint entryPoint =
                 new RestAuthenticationEntryPoint(new SecurityErrorWriter(mapper));
         filter = new JwtAuthenticationFilter(jwtService, usuarioRepository, entryPoint);

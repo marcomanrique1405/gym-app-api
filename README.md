@@ -1,6 +1,6 @@
 # gym-app-api
 
-API de gimnasio con Spring Boot, PostgreSQL, JWT y los roles exclusivos `ADMIN` y `USER`.
+API de gimnasio con Spring Boot 4.1, PostgreSQL, JWT y los roles exclusivos `ADMIN` y `USER`.
 
 ## Requisitos
 
@@ -74,7 +74,7 @@ export CORS_ALLOWED_ORIGINS='http://localhost:3000,http://localhost:5173'
 ./mvnw spring-boot:run
 ```
 
-`JWT_SECRET` debe ser Base64 y representar al menos 32 bytes aleatorios. No reutilice el secreto anterior. También pueden configurarse `JWT_EXPIRATION_MS` y `SERVER_PORT`.
+`JWT_SECRET` debe ser Base64 y representar al menos 32 bytes aleatorios. La aplicación valida el secreto y la expiración al arrancar y se detiene inmediatamente si la configuración no es válida. No reutilice el secreto anterior. También pueden configurarse `JWT_EXPIRATION_MS` y `SERVER_PORT`.
 
 Producción requiere `SPRING_PROFILES_ACTIVE=prod` y todas las variables anteriores. El perfil no se selecciona automáticamente para evitar arrancar accidentalmente con una configuración incorrecta.
 
@@ -120,6 +120,14 @@ Después, compruebe que se creó exactamente una fila `ADMIN` activa y cambie/bo
 
 Los endpoints normales nunca permiten que `ADMIN` evada la propiedad del recurso.
 
+El historial se consulta de forma paginada para evitar cargar todas las sesiones en memoria:
+
+```http
+GET /sesiones-entrenamiento?page=0&size=20
+```
+
+`page` inicia en cero y `size` debe estar entre 1 y 100. La respuesta incluye `content`, `page`, `size`, `totalElements`, `totalPages`, `first` y `last`.
+
 ## Respuestas de error
 
 Todos los errores usan `ApiError`: `timestamp`, `status`, `error`, `message` y `path`.
@@ -147,7 +155,7 @@ En Linux/macOS:
 ./mvnw clean verify
 ```
 
-La línea base actual ejecuta 19 suites con 84 pruebas, sin fallos, errores ni pruebas omitidas.
+La línea base actual ejecuta 21 suites con 89 pruebas, sin fallos, errores ni pruebas omitidas.
 
 La validación completa del entorno Docker se ejecuta en un proyecto aislado:
 

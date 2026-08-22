@@ -1,5 +1,6 @@
 package com.gymtracker.gym_api.controller.workout;
 
+import com.gymtracker.gym_api.application.dto.response.PageResponse;
 import com.gymtracker.gym_api.application.dto.response.workout.SesionEntrenamientoResponse;
 import com.gymtracker.gym_api.application.usecase.workout.FinalizarSesionEntrenamientoUseCase;
 import com.gymtracker.gym_api.application.usecase.workout.GetHistorialSesionesEntrenamientoUseCase;
@@ -14,9 +15,9 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -54,9 +55,12 @@ public class SesionEntrenamientoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SesionEntrenamientoResponse>> obtenerHistorial() {
+    public ResponseEntity<PageResponse<SesionEntrenamientoResponse>> obtenerHistorial(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
         return ResponseEntity.ok(
-                getHistorialSesionesEntrenamientoUseCase.obtenerHistorial()
+                getHistorialSesionesEntrenamientoUseCase.obtenerHistorial(page, size)
         );
     }
 

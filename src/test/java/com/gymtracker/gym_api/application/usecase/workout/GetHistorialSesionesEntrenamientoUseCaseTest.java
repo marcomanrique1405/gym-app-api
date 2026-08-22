@@ -1,6 +1,8 @@
 package com.gymtracker.gym_api.application.usecase.workout;
 
+import com.gymtracker.gym_api.application.dto.response.PageResponse;
 import com.gymtracker.gym_api.application.dto.response.workout.SesionEntrenamientoResponse;
+import com.gymtracker.gym_api.domain.model.PageResult;
 import com.gymtracker.gym_api.domain.model.workout.SesionEntrenamiento;
 import com.gymtracker.gym_api.domain.repository.workout.SesionEntrenamientoRepository;
 import com.gymtracker.gym_api.infrastructure.security.SecurityUtils;
@@ -32,27 +34,42 @@ class GetHistorialSesionesEntrenamientoUseCaseTest {
         SesionEntrenamiento reciente = sesion(LocalDateTime.now(), false);
         SesionEntrenamiento anterior = sesion(LocalDateTime.now().minusDays(1), true);
         when(securityUtils.getCurrentUserId()).thenReturn(usuarioId);
-        when(sesionRepository.obtenerPorUsuarioId(usuarioId)).thenReturn(List.of(reciente, anterior));
+        when(sesionRepository.obtenerPorUsuarioId(usuarioId, 0, 20))
+                .thenReturn(new PageResult<>(List.of(reciente, anterior), 0, 20, 2, 1));
 
-        List<SesionEntrenamientoResponse> resultado = useCase.obtenerHistorial();
+        PageResponse<SesionEntrenamientoResponse> resultado = useCase.obtenerHistorial(0, 20);
 
-        assertEquals(2, resultado.size());
-        assertEquals(reciente.getId(), resultado.get(0).getId());
-        assertFalse(resultado.get(0).isFinalizada());
-        assertEquals(anterior.getId(), resultado.get(1).getId());
-        assertTrue(resultado.get(1).isFinalizada());
-        verify(sesionRepository).obtenerPorUsuarioId(usuarioId);
+        assertEquals(2, resultado.content().size());
+        assertEquals(reciente.getId(), resultado.content().get(0).getId());
+        assertFalse(resultado.content().get(0).isFinalizada());
+        assertEquals(anterior.getId(), resultado.content().get(1).getId());
+        assertTrue(resultado.content().get(1).isFinalizada());
+        assertEquals(2, resultado.totalElements());
+        assertTrue(resultado.first());
+        assertTrue(resultado.last());
+        verify(sesionRepository).obtenerPorUsuarioId(usuarioId, 0, 20);
     }
 
     @Test
     void devuelveListaVaciaCuandoElUsuarioNoTieneSesiones() {
         when(securityUtils.getCurrentUserId()).thenReturn(usuarioId);
-        when(sesionRepository.obtenerPorUsuarioId(usuarioId)).thenReturn(List.of());
+        when(sesionRepository.obtenerPorUsuarioId(usuarioId, 0, 20))
+                .thenReturn(new PageResult<>(List.of(), 0, 20, 0, 0));
 
-        List<SesionEntrenamientoResponse> resultado = useCase.obtenerHistorial();
+        PageResponse<SesionEntrenamientoResponse> resultado = useCase.obtenerHistorial(0, 20);
 
         assertNotNull(resultado);
-        assertTrue(resultado.isEmpty());
+        assertTrue(resultado.content().isEmpty());
+        assertEquals(0, resultado.totalElements());
+        assertTrue(resultado.first());
+        assertTrue(resultado.last());
+    }
+
+    @Test
+    void rechazaParametrosDePaginacionInvalidos() {
+        assertThrows(IllegalArgumentException.class, () -> useCase.obtenerHistorial(-1, 20));
+        assertThrows(IllegalArgumentException.class, () -> useCase.obtenerHistorial(0, 0));
+        assertThrows(IllegalArgumentException.class, () -> useCase.obtenerHistorial(0, 101));
     }
 
     private SesionEntrenamiento sesion(LocalDateTime inicio, boolean finalizada) {

@@ -3,7 +3,6 @@ package com.gymtracker.gym_api.infrastructure.security;
 import com.gymtracker.gym_api.domain.enums.Rol;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.UUID;
 
@@ -14,9 +13,7 @@ class JwtServiceTest {
     private JwtService service;
 
     @BeforeEach void setUp() {
-        service = new JwtService();
-        ReflectionTestUtils.setField(service, "secretKey", KEY);
-        ReflectionTestUtils.setField(service, "expirationTime", 60_000L);
+        service = new JwtService(KEY, 60_000L);
     }
 
     @Test void tokenValidoContieneSubjectYRole() {
@@ -34,9 +31,15 @@ class JwtServiceTest {
     }
 
     @Test void tokenExpiradoEsInvalido() throws InterruptedException {
-        ReflectionTestUtils.setField(service, "expirationTime", 1L);
+        service = new JwtService(KEY, 1L);
         String token = service.generateToken(UUID.randomUUID().toString(), "u@e.com", Rol.USER);
         Thread.sleep(5L);
         assertFalse(service.isTokenValid(token));
+    }
+
+    @Test void rechazaConfiguracionJwtInvalidaAlConstruirse() {
+        assertThrows(IllegalStateException.class, () -> new JwtService("no-es-base64%%%", 60_000L));
+        assertThrows(IllegalStateException.class, () -> new JwtService("Y2xhdmUtY29ydGE=", 60_000L));
+        assertThrows(IllegalStateException.class, () -> new JwtService(KEY, 0L));
     }
 }

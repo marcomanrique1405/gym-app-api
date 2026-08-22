@@ -1,13 +1,16 @@
 package com.gymtracker.gym_api.infrastructure.repositoryImpl.workout;
 
 import com.gymtracker.gym_api.domain.model.workout.SesionEntrenamiento;
+import com.gymtracker.gym_api.domain.model.PageResult;
 import com.gymtracker.gym_api.domain.repository.workout.SesionEntrenamientoRepository;
 import com.gymtracker.gym_api.infrastructure.entity.workout.SesionEntrenamientoEntity;
 import com.gymtracker.gym_api.infrastructure.jpa.workout.SesionEntrenamientoJpaRepository;
 import com.gymtracker.gym_api.infrastructure.mapper.workout.SesionEntrenamientoMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,12 +55,23 @@ public class SesionEntrenamientoRepositoryImpl implements SesionEntrenamientoRep
     }
 
     @Override
-    public List<SesionEntrenamiento> obtenerPorUsuarioId(UUID usuarioId) {
-        return sesionEntrenamientoJpaRepository
-                .findByUsuarioIdOrderByFechaInicioDesc(usuarioId)
-                .stream()
-                .map(sesionEntrenamientoMapper::toDomain)
-                .toList();
+    public PageResult<SesionEntrenamiento> obtenerPorUsuarioId(UUID usuarioId, int page, int size) {
+        PageRequest pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "fechaInicio")
+                        .and(Sort.by(Sort.Direction.DESC, "id"))
+        );
+        Page<SesionEntrenamientoEntity> result =
+                sesionEntrenamientoJpaRepository.findByUsuarioId(usuarioId, pageable);
+
+        return new PageResult<>(
+                result.getContent().stream().map(sesionEntrenamientoMapper::toDomain).toList(),
+                result.getNumber(),
+                result.getSize(),
+                result.getTotalElements(),
+                result.getTotalPages()
+        );
     }
 
 }

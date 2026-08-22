@@ -1,6 +1,5 @@
 package com.gymtracker.gym_api.shared.validation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gymtracker.gym_api.application.dto.request.auth.RegisterUserRequest;
 import com.gymtracker.gym_api.application.dto.request.exercise.EjercicioRequest;
 import com.gymtracker.gym_api.application.dto.request.exercise.UpdateEjercicioRequest;
@@ -16,11 +15,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import tools.jackson.databind.json.JsonMapper;
 
 class NormalizedNameValidationTest {
     private static jakarta.validation.ValidatorFactory validatorFactory;
     private static Validator validator;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper jsonMapper = JsonMapper.builder().build();
 
     @BeforeAll
     static void setUpValidator() {
@@ -35,7 +35,7 @@ class NormalizedNameValidationTest {
 
     @Test
     void registroRechazaNombreQueQuedaConUnCaracterTrasTrim() throws Exception {
-        RegisterUserRequest request = objectMapper.readValue("""
+        RegisterUserRequest request = jsonMapper.readValue("""
                 {"nombre":" a ","email":"user@example.com","password":"password123"}
                 """, RegisterUserRequest.class);
 
@@ -45,7 +45,7 @@ class NormalizedNameValidationTest {
     @Test
     void rutinasRechazanNombresInvalidosTrasTrim() throws Exception {
         CreateRutinaRequest create = new CreateRutinaRequest(" a ", TipoProgresion.MANUAL);
-        UpdateRutinaRequest update = objectMapper.readValue("{\"nombre\":\"   \"}", UpdateRutinaRequest.class);
+        UpdateRutinaRequest update = jsonMapper.readValue("{\"nombre\":\"   \"}", UpdateRutinaRequest.class);
 
         assertFalse(validator.validate(create).isEmpty());
         assertFalse(validator.validate(update).isEmpty());
@@ -62,7 +62,7 @@ class NormalizedNameValidationTest {
 
     @Test
     void patchPermiteNombreAusenteYNombreNormalizadoValido() throws Exception {
-        UpdateRutinaRequest withoutName = objectMapper.readValue("{}", UpdateRutinaRequest.class);
+        UpdateRutinaRequest withoutName = jsonMapper.readValue("{}", UpdateRutinaRequest.class);
         UpdateEjercicioRequest validName = new UpdateEjercicioRequest(" ab ", null, null);
 
         assertTrue(validator.validate(withoutName).isEmpty());

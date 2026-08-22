@@ -37,7 +37,7 @@ public class EjercicioRutinaRequest {
 
     @NotNull(message = "El incremento de peso es obligatorio")
     @DecimalMin(value = "0.0", inclusive = true, message = "El incremento de peso no puede ser negativo")
-    @Digits(integer = 3, fraction = 2, message = "El incremento de peso debe tener máximo 3 dígitos enteros y 2 decimales")
+    @Digits(integer = 2, fraction = 2, message = "El incremento de peso debe tener máximo 2 dígitos enteros y 2 decimales")
     private BigDecimal incrementoPeso;
 
     @NotNull(message = "El estado de sobrecarga activa es obligatorio")

@@ -46,7 +46,10 @@ public class CreateDiaRutinaUseCase {
             throw new DiaRutinaAlreadyExistsException();
         }
 
-        int ordenDia = diaRutinaRepository.contarDiasPorRutinaId(rutina.getId()) + 1;
+        int ordenDia = 1;
+        while (diaRutinaRepository.existePorRutinaIdYOrdenDia(rutina.getId(), ordenDia)) {
+            ordenDia++;
+        }
 
         DiaRutina diaRutina = new DiaRutina(
                 UUID.randomUUID(),

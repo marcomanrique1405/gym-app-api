@@ -9,10 +9,10 @@ import java.util.UUID;
 
 public interface RutinaJpaRepository extends JpaRepository<RutinaEntity, UUID> {
 
-    boolean existsByUsuarioIdAndNombre(UUID usuarioId, String nombre);
+    boolean existsByUsuarioIdAndNombreIgnoreCaseAndActivaTrue(UUID usuarioId, String nombre);
 
     List<RutinaEntity> findByUsuarioIdAndActivaTrue(UUID usuarioId);
 
-    Optional<RutinaEntity> findByIdAndUsuarioId(UUID id, UUID usuarioId);
+    Optional<RutinaEntity> findByIdAndUsuarioIdAndActivaTrue(UUID id, UUID usuarioId);
 
 }

@@ -51,14 +51,16 @@ public class UpdateDiaRutinaUseCase {
                 .obtenerPorIdYRutinaId(diaRutinaId, rutina.getId())
                 .orElseThrow(DiaRutinaNotFoundException::new);
 
-        boolean cambioDiaSemana = !diaRutina.getDiaSemana().equals(request.getDiaSemana());
+        if (request.getDiaSemana() != null) {
+            boolean cambioDiaSemana = !diaRutina.getDiaSemana().equals(request.getDiaSemana());
 
-        if (cambioDiaSemana &&
-                diaRutinaRepository.existePorRutinaIdYDiaSemana(rutina.getId(), request.getDiaSemana())) {
-            throw new DiaRutinaAlreadyExistsException();
+            if (cambioDiaSemana && diaRutinaRepository
+                    .existePorRutinaIdYDiaSemana(rutina.getId(), request.getDiaSemana())) {
+                throw new DiaRutinaAlreadyExistsException();
+            }
+
+            diaRutina.actualizarDiaSemana(request.getDiaSemana());
         }
-
-        diaRutina.actualizarDiaSemana(request.getDiaSemana());
 
         DiaRutina diaRutinaSave = diaRutinaRepository.save(diaRutina);
 

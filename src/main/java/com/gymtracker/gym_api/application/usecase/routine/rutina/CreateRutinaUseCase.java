@@ -6,6 +6,7 @@ import com.gymtracker.gym_api.domain.model.routine.rutina.Rutina;
 import com.gymtracker.gym_api.domain.repository.routine.rutina.RutinaRepository;
 import com.gymtracker.gym_api.infrastructure.security.SecurityUtils;
 import org.springframework.stereotype.Service;
+import com.gymtracker.gym_api.shared.exception.routine.RoutineAlreadyExistsException;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -27,6 +28,9 @@ public class CreateRutinaUseCase {
         UUID usuarioId = securityUtils.getCurrentUserId();
 
         String nombre = request.getNombre().trim();
+        if (repository.existePorUsuarioIdYNombre(usuarioId, nombre)) {
+            throw new RoutineAlreadyExistsException();
+        }
 
         Rutina rutina = new Rutina(
                 UUID.randomUUID(),

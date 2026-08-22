@@ -11,6 +11,7 @@ import com.gymtracker.gym_api.application.usecase.routine.rutina.UpdateRutinaUse
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -20,6 +21,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/rutinas")
+@PreAuthorize("hasAnyRole('ADMIN','USER')")
 public class RutinaController {
 
     private final CreateRutinaUseCase createRutinaUseCase;

@@ -20,7 +20,8 @@ public class CreateEjercicioUseCase {
 
     public EjercicioResponse guardar(EjercicioRequest request) {
 
-        boolean existePorNombre = ejercicioRepository.existePorNombreYActiva(request.getNombre());
+        String nombre = request.getNombre().trim();
+        boolean existePorNombre = ejercicioRepository.existePorNombreYActiva(nombre);
 
         if (existePorNombre) {
             throw new EjercicioAlreadyExistsException();
@@ -28,9 +29,9 @@ public class CreateEjercicioUseCase {
 
         Ejercicio ejercicio = Ejercicio.builder()
                 .id(UUID.randomUUID())
-                .nombre(request.getNombre())
+                .nombre(nombre)
                 .grupoMuscular(request.getGrupoMuscular())
-                .descripcion(request.getDescripcion())
+                .descripcion(request.getDescripcion().trim())
                 .activo(true)
                 .build();
 

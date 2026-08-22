@@ -1,5 +1,6 @@
 package com.gymtracker.gym_api.application.dto.request.auth;
 
+import com.gymtracker.gym_api.shared.validation.NormalizedSize;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,7 +14,7 @@ import lombok.Setter;
 public class RegisterUserRequest {
 
     @NotBlank
-    @Size(min = 2, max = 100)
+    @NormalizedSize(min = 2, max = 100)
     private String nombre;
 
     @NotBlank

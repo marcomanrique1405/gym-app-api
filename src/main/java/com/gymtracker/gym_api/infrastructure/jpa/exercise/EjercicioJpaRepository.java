@@ -11,6 +11,6 @@ public interface EjercicioJpaRepository extends JpaRepository<EjercicioEntity, U
 
     List<EjercicioEntity> findByGrupoMuscularAndActivoTrueOrderByNombreAsc(GrupoMuscular grupoMuscular);
 
-    boolean existsByNombreAndActivoTrue(String nombre);
+    boolean existsByNombreIgnoreCaseAndActivoTrue(String nombre);
 
 }
